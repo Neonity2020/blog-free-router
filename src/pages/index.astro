@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout>
+  <section class="hero">
+    <h1>把想法沉淀为资产</h1>
+    <p>
+      这里是 <a href="https://free-router.com">free-router.com</a> 的官方博客。
+      关于 AI 协作、数字资产构建与长期主义的思考与实践。
+    </p>
+  </section>
+
+  <section class="post-list">
+    {posts.map((post) => (
+      <article class="post-card">
+        <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+        <div class="post-meta">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {dateFormatter.format(post.data.pubDate)}
+          </time>
+          {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+        <p>{post.data.description}</p>
+      </article>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 3.5rem 0 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2.1rem;
+    color: var(--heading);
+    margin: 0 0 0.75rem;
+  }
+
+  .hero p {
+    color: var(--text-soft);
+    margin: 0;
+    max-width: 34em;
+  }
+
+  .post-list {
+    padding: 1rem 0 2rem;
+  }
+
+  .post-card {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+  }
+
+  .post-card h2 a {
+    color: var(--heading);
+  }
+
+  .post-card h2 a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .post-card .post-meta {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-card p {
+    margin: 0.5rem 0 0;
+    color: var(--text-soft);
+  }
+</style>

@@ -1,0 +1,16 @@
+{
+  "name": "blog-free-router",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "blog.free-router.com — Neonity 的个人博客",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.3.8"
+  }
+}

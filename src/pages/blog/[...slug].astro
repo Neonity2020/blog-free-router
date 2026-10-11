@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="prose">
+    <header>
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {dateFormatter.format(post.data.pubDate)}
+        </time>
+        <span>{post.data.author}</span>
+        {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+      {post.data.updatedDate && (
+        <p class="updated">
+          更新于 {dateFormatter.format(post.data.updatedDate)}
+        </p>
+      )}
+    </header>
+
+    <Content />
+  </article>
+
+  <nav class="back-link">
+    <a href="/">← 返回全部文章</a>
+  </nav>
+</BaseLayout>
+
+<style>
+  .updated {
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+  }
+
+  .back-link {
+    padding: 2rem 0 1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+    font-size: 0.95rem;
+  }
+</style>
